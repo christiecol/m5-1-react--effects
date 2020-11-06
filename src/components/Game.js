@@ -11,18 +11,33 @@ const items = [
   { id: "cursor", name: "Cursor", cost: 10, value: 1 },
   { id: "grandma", name: "Grandma", cost: 100, value: 10 },
   { id: "farm", name: "Farm", cost: 1000, value: 80 },
+  { id: "megaCursor", name: "Mega Cursor", cost: 500, value: 0 },
 ];
 // console.log(items[0].name);
+
+// const eachItemCost = items.map((item) => {
+//   return item.cost;
+// });
+
+const initialCost = {
+  cursor: 10,
+  grandma: 100,
+  farm: 1000,
+  megaCursor: 500,
+};
 
 const initialItems = {
   cursor: 0,
   grandma: 0,
   farm: 0,
+  megaCursor: 0,
 };
 
 const Game = () => {
-  const [numCookies, setNumCookies] = useState(0);
+  const [numCookies, setNumCookies] = useState(10000);
   const [purchasedItems, setPurchasedItems] = useState(initialItems);
+  const [itemCost, setItemCost] = useState(initialCost);
+  console.log(itemCost);
 
   useInterval(() => {
     const numOfGeneratedCookies = calculateCookiesPerTick(purchasedItems);
@@ -36,15 +51,20 @@ const Game = () => {
       purchasedItems.cursor * items[0].value +
       purchasedItems.grandma * items[1].value +
       purchasedItems.farm * items[2].value;
+    // purchasedItems.megaCursor * items[3].clickCount;
 
     return generatedCookies;
   };
 
   const handleClick = (cost, id) => {
+    console.log(cost);
     if (cost > numCookies) {
       alert("You do not have enough cookies!");
     } else {
       setNumCookies((numCookies) => numCookies - cost);
+      setItemCost((itemCost) => {
+        return { ...itemCost, [id]: Math.ceil(itemCost[id] * 1.25) };
+      });
       setPurchasedItems((purchasedItems) => {
         return { ...purchasedItems, [id]: purchasedItems[id] + 1 };
       });
@@ -68,7 +88,11 @@ const Game = () => {
         </Indicator>
         <Button
           onClick={() => {
-            setNumCookies((numCookies) => numCookies + 1);
+            {
+              setNumCookies((numCookies) => {
+                return numCookies + Math.pow(2, purchasedItems.megaCursor);
+              });
+            }
           }}
         >
           <Cookie src={cookieSrc} />
@@ -84,8 +108,9 @@ const Game = () => {
               key={item.id}
               id={item.id}
               name={item.name}
-              cost={item.cost}
+              cost={itemCost[item.id]}
               value={item.value}
+              purchasedItems={purchasedItems}
               firstItem={firstItem}
               numOwned={purchasedItems[item.id]}
               handleClick={handleClick}

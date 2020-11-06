@@ -2,7 +2,16 @@ import React, { useEffect, useRef } from "react";
 import styled from "styled-components";
 
 const Item = (props) => {
-  const { name, cost, value, numOwned, handleClick, id, firstItem } = props;
+  const {
+    name,
+    cost,
+    value,
+    numOwned,
+    handleClick,
+    id,
+    firstItem,
+    purchasedItems,
+  } = props;
   // console.log(props);
 
   const ref = useRef(null);
@@ -30,7 +39,14 @@ const Item = (props) => {
           <Name>{name}</Name>
           <Cost>
             Cost: {cost} cookie(s).{" "}
-            <span>Produces {value} cookie(s)/second</span>
+            {id !== "megaCursor" ? (
+              <span>Produces {value} cookie(s)/second</span>
+            ) : (
+              <span>
+                Clicking cookie produces{" "}
+                {Math.pow(2, purchasedItems.megaCursor)} / click
+              </span>
+            )}
           </Cost>
         </NameAndCost>
 
